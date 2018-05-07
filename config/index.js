@@ -11,7 +11,7 @@ module.exports = {
 		// Various Dev Server settings
 		host: 'localhost', // can be overwritten by process.env.HOST
 		// dev-server监听的端口
-		port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+		port: 8093, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
 		// 是否自动打开浏览器
 		autoOpenBrowser: false,
 		errorOverlay: true,
