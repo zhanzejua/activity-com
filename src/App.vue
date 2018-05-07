@@ -3,16 +3,18 @@
 </style>
 <template>
 	<div id="app">
+		<Progress></Progress>
+		<TextOverflow></TextOverflow>
 	</div>
 </template>
 <script>
-import {} from './common/api';
-import Toast from './common/Toast.vue';
-import util from './common/util';
+import Progress from './components/business/Progress.vue';
+import TextOverflow from './components/business/TextOverflow.vue';
 export default {
 	name: 'app',
 	data() {
-		return {}
+		return {
+		}
 	},
 	computed: {
 	},
@@ -21,6 +23,8 @@ export default {
 	methods: {
 	},
 	components: {
+		Progress,
+		TextOverflow
 	}
 }
 </script>

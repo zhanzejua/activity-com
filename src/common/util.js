@@ -1,8 +1,5 @@
-import Vue from 'vue';
-let global = typeof window != 'undefined' ? window : (function() {return this})() || {};
-let _isNative = global.callNative ? true : false;
 export default {
-	getQueryString: function(name) {
+	getUrlParam(name) {
 	    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
 	    var r = window.location.search.substr(1).match(reg);
 	    if (r != null) {
@@ -10,69 +7,8 @@ export default {
 	    }
 	    return null;
 	},
-	isAndroid: function() {
-		let agent = navigator.userAgent;
-		let flag = false;
-		if(agent.indexOf('Android') > -1 || agent.indexOf('Linux') > -1) {
-			flag = true;
-		}
-		return flag;
-	},
-	isIOS: function() {
-		let agent = navigator.userAgent;
-		let flag = false;
-		if(!!agent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)) {
-			flag = true;
-		}
-		return flag;
-	},
-	isNative: function() {
-		return _isNative;
-	},
-	isObject: function(obj) {
-		return obj !== null && typeof obj === 'object'
-	},
-	genZIndex: function() {
-		return ZINDEX += 2;
-	},
-	createComponentProxy: function(S, data) {
-		//为了可以让修改data时界面得到响应
-		let vm = new Vue({
-			data
-		});
-		vm.$destroy();
-
-		S._Ctor = null;
-		let Stub = Vue.extend(S);
-		let Proxy = function(options) {
-			let propsData = options.propsData = Vue.util.extend(options.propsData || {}, data);
-			let vm = new Stub(options);
-			let ufp = vm._updateFromParent;
-			vm._updateFromParent = function() {
-				arguments[0] = Vue.util.extend(arguments[0] || {}, propsData);
-				ufp && ufp.apply(this, arguments);
-			}
-			return vm;
-		}
-		Vue.util.extend(Proxy, Stub);
-		return Proxy;
-	},
-	// 客户端接口
-	/*登录接口*/
-	login: function() {
-		if(this.isAndroid()) {
-			callNative.login();
-		} else if(this.isIOS()) {
-			window.webkit.messageHandlers.login.postMessage(null)
-		}
-	},
-	/*登录回调接口*/
-	/*userInfo: function(token, avator, name) {
-		alert('userInfo:'+token)
-		// this.$store.commit('setToken', token);
-		// this.$store.commit('setUserInfo', {avator: avator, name: name});
-	},*/
-	/*formatDate: function(format, date) {
+	// formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss')
+	formatDate(date, format) {
 	    var o = {
 	        'M+': date.getMonth() + 1,
 	        'd+': date.getDate(),
@@ -82,11 +18,14 @@ export default {
 	        'q+': Math.floor((date.getMonth() + 3) / 3),
 	        'S': date.getMilliseconds()
 	    };
-
 	    if (/(y+)/.test(format)) {
+            // $n保存了第n个捕获的匹配组
+	    	console.log(RegExp)
+	    	console.log(RegExp.$0)  //undefined,不存在$0
+	    	console.log(RegExp.$1)  //yyyy
+	    	console.log(RegExp.$2)  //空的
 	        format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
 	    }
-
 	    for (var k in o) {
 	        if (new RegExp("(" + k + ")").test(format)) {
 	            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k]
@@ -94,5 +33,52 @@ export default {
 	        }
 	    }
 	    return format;
-	},*/
+	},
+	setCookie(name, value) {
+        var Days = 1;
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+        document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+	},
+    getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return (unescape(arr[2]));
+        else
+            return null;
+    },
+    //删除cookies
+    delCookie(name) {
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval = this.getCookie(name);
+        if (cval != null)
+            document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+    },
+    setStorage(id, val) {
+        var key = 'zzj_data'
+        var storage = localStorage[key];
+        if (!storage) {
+            var obj = {};
+            obj[id] = val;
+            localStorage[key] = JSON.stringify(obj);
+        } else {
+            storage = JSON.parse(storage);
+            storage[id] = val;
+            localStorage[key] = JSON.stringify(storage);
+        }
+    },
+    getStorage(id) {
+        var key = 'zzj_data';
+        var storage = localStorage[key];
+        if (storage) {
+            storage = JSON.parse(storage);
+            for (var k in storage) {
+                if (k == id) {
+                    return storage[k];
+                }
+            }
+        }
+        return false;
+    }
 }
