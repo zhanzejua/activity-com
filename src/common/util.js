@@ -80,5 +80,56 @@ export default {
             }
         }
         return false;
+    },
+    isAndroidOrIos() {
+        let ua  = navigator.userAgent.toLowerCase();
+        if(ua.match(/android/)) {
+            alert('android')
+        } else if(ua.match(/iphone|ipod|ipad/)) {
+            alert('ios')
+        }
+    },
+    installApp() {
+        let url = {};
+        let ua = navigator.userAgent.toLowerCase();
+        if(ua.match(/android/i)){
+            url = {
+                open: '...://splash',
+                store: 'market://search?q=app名称'
+            };
+        }
+        if(ua.match(/iphone|ipod|ipad/)){
+            url = {
+                open: '...://splash',
+                store: 'https://itunes.apple.com/cn/app/wei-xin/id'+'appId'
+            };
+        }
+        let winScreenWidth = window.screen.width;
+        if(/MicroMessenger/gi.test(navigator.userAgent) && ua.match(/android/i)) {
+            window.location.href = 'http://a.app.qq.com/o/simple.jsp?pkgname=渠道包名';
+        } else if(winScreenWidth < 800){
+            let iframe = document.createElement('iframe');
+            let timer = null;
+            let isInstalled = false;
+            document.body.appendChild(iframe);
+            iframe.src = url.open;
+            // iframe.style.display = 'none';
+            iframe.onload = function(e){
+                var e = e || window.event;
+                e.preventDefault();
+                isInstalled = true
+            }
+            iframe.onerror = function() {
+                isInstalled = false;
+            }
+            timer = setTimeout(function() {
+                document.body.removeChild(iframe);
+                if(!isInstalled){
+                    window.location.href = url.store;
+                }
+            }, 400);
+        } else {
+            window.location.href = '下载链接apk'
+        }
     }
 }
