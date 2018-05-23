@@ -54,7 +54,7 @@
 </template>
 <script>
 export default {
-	name: 'textOverflow',
+	name: 'TextOverflow',
 	data() {
 		return {
 		}
