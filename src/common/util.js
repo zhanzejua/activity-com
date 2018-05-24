@@ -131,5 +131,33 @@ export default {
         } else {
             window.location.href = '下载链接apk'
         }
+    },
+    hasArrRepeat(arr) {
+        //一、不适合[1,2,3,11],因为1重复了
+        /*let arrToStr = arr.join(',')+',';
+        for(let i = 0; i < arr.length; i++) {
+            console.log(arrToStr.replace(arr[i]+',', ''))
+            if(arrToStr.replace(arr[i]+',', '').indexOf(arr[i]+',') > -1) {
+                alert('重复了'+arr[i])
+                return
+            }
+        }*/
+        // 二、排序方法
+        /*let sortArr = arr.sort();
+        for(let i = 1; i < arr.length; i++) {
+            if(arr[i] == arr[i-1]) {
+                alert('重复了' + arr[i]);
+                return
+            }
+        }*/
+        // 三、对象消除
+        let hash = {};
+        for(let i in arr) {
+            if(hash[arr[i]]) {
+                return true;
+            }
+            hash[arr[i]] = true
+        }
+        return false
     }
 }

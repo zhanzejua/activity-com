@@ -9,9 +9,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')// 查看空闲端口位置，默认情况下搜索8000这个端口
+const ips = getLocalIps();
 
-const HOST = process.env.HOST//processs为node的一个全局对象获取当前程序的环境变量，即host
-const PORT = process.env.PORT && Number(process.env.PORT)
+const HOST = ips.length ? ips[0] : config.dev.host;//processs为node的一个全局对象获取当前程序的环境变量，即host
+const PORT = process.env.PORT && Number(process.env.PORT) || config.dev.port;
 
 const devWebpackConfig = merge(baseWebpackConfig, {
 	module: {
@@ -31,8 +32,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 		hot: true, // 启动模块热更新特性
 		contentBase: false, // since we use CopyWebpackPlugin.
 		compress: true, // 一切服务都启动用gzip方式进行压缩代码
-		host: HOST || config.dev.host,
-		port: PORT || config.dev.port,
+		host: HOST,
+		port: PORT,
 		open: config.dev.autoOpenBrowser, //开服务器是否自动开默认浏览器
 		overlay: config.dev.errorOverlay
 			? { warnings: false, errors: true }
@@ -69,6 +70,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 	]
 })
 
+function getLocalIps() {
+    var os = require('os');
+    var interfaces = os.networkInterfaces();
+    var addresses = [];
+    for (var k in interfaces) {
+        for (var k2 in interfaces[k]) {
+            var address = interfaces[k][k2];
+            if (address.family === 'IPv4' && !address.internal) {
+                addresses.push(address.address);
+            }
+        }
+    }
+    return addresses;
+}
 module.exports = new Promise((resolve, reject) => {
 	portfinder.basePort = process.env.PORT || config.dev.port
 	//由于portfinder这个插件本身是从8000开始查找，这里设置查找的默认端口号
@@ -85,7 +100,7 @@ module.exports = new Promise((resolve, reject) => {
 			// Add FriendlyErrorsPlugin
 			devWebpackConfig.plugins.push(new FriendlyErrorsPlugin({
 				compilationSuccessInfo: {
-					messages: [`Your application is running here: http://${devWebpackConfig.devServer.host}:${port}`],
+					messages: [`Your application is running here: http://${HOST}:${port}`],
 				},
 				// 添加提示信息，所在域名和端口的
 				onErrors: config.dev.notifyOnErrors
