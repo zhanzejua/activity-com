@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import Vuex from 'vuex'
 import store from './vuex/store'
-
+require('./mock.js')
 
 Vue.use(Vuex)
 
